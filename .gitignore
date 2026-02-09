@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test fixtures (actual UPD PDFs — don't commit real financial docs)
+tests/fixtures/*.pdf
+
+# Output
+output/
+*.json
+!tests/expected/*.json
+
+# Distribution
+*.tar.gz
+*.whl
