@@ -56,53 +56,53 @@ def main():
     # Вывод статуса валидации на stderr
     v = doc.validation
     if not v.is_valid:
-        print(f"\n  VALIDATION FAILED ({len(v.errors)} error(s))", file=sys.stderr)
+        print(f"\n  ВАЛИДАЦИЯ НЕ ПРОЙДЕНА ({len(v.errors)} ошибок)", file=sys.stderr)
         for e in v.errors:
             print(f"    ERROR: {e}", file=sys.stderr)
     for w in v.warnings:
         print(f"    WARNING: {w}", file=sys.stderr)
     if v.is_valid and not v.warnings:
-        print(f"\n  VALIDATION PASSED", file=sys.stderr)
+        print(f"\n  ВАЛИДАЦИЯ ПРОЙДЕНА", file=sys.stderr)
 
 
 def _print_summary(doc):
     """Вывести удобочитаемое резюме проанализированного документа."""
     print(f"{'=' * 60}")
-    print(f"  УПД (Status {doc.status}) #{doc.invoice_number}")
-    print(f"  Date: {doc.invoice_date} ({doc.invoice_date_iso})")
-    print(f"  Pages: {doc.page_count}")
-    print(f"  Generator: {doc.generator}")
+    print(f"  УПД (Статус {doc.status}) №{doc.invoice_number}")
+    print(f"  Дата: {doc.invoice_date} ({doc.invoice_date_iso})")
+    print(f"  Страниц: {doc.page_count}")
+    print(f"  Генератор: {doc.generator}")
     print(f"{'=' * 60}")
     print()
-    print(f"  Seller:  {doc.seller.name}")
-    print(f"           INN {doc.seller.inn} / KPP {doc.seller.kpp}")
-    print(f"           {doc.seller.address}")
+    print(f"  Продавец:  {doc.seller.name}")
+    print(f"             ИНН {doc.seller.inn} / КПП {doc.seller.kpp}")
+    print(f"             {doc.seller.address}")
     print()
-    print(f"  Buyer:   {doc.buyer.name}")
-    print(f"           INN {doc.buyer.inn} / KPP {doc.buyer.kpp}")
-    print(f"           {doc.buyer.address}")
+    print(f"  Покупатель: {doc.buyer.name}")
+    print(f"              ИНН {doc.buyer.inn} / КПП {doc.buyer.kpp}")
+    print(f"              {doc.buyer.address}")
     print()
-    print(f"  Currency: {doc.currency} ({doc.currency_code})")
+    print(f"  Валюта: {doc.currency} ({doc.currency_code})")
     print()
 
     # Режим НДС
     vat = doc.vat
     mode_labels = {
-        "none": "NO VAT (БезНДС / НДСНеВыделять)",
-        "ontop": "VAT ON TOP (НДС сверху / СуммаВключаетНДС=false)",
-        "included": "VAT INCLUDED (НДС в сумме / СуммаВключаетНДС=true)",
+        "none": "БЕЗ НДС (НДСНеВыделять)",
+        "ontop": "НДС СВЕРХУ (СуммаВключаетНДС=false)",
+        "included": "НДС В СУММЕ (СуммаВключаетНДС=true)",
     }
     mode_label = mode_labels.get(vat.vat_mode, vat.vat_mode)
-    rates_str = ", ".join(f"{r}%" for r in vat.vat_rates) if vat.vat_rates else "none"
-    print(f"  VAT Mode:  {mode_label}")
-    print(f"  VAT Rates: {rates_str}")
-    print(f"  Confidence: {vat.detection_confidence} — {vat.detection_reason}")
+    rates_str = ", ".join(f"{r}%" for r in vat.vat_rates) if vat.vat_rates else "нет"
+    print(f"  Режим НДС:  {mode_label}")
+    print(f"  Ставки НДС: {rates_str}")
+    print(f"  Уверенность: {vat.detection_confidence} — {vat.detection_reason}")
     print()
 
     # Строки товаров со столбцом НДС
     has_vat = vat.vat_mode != "none"
     if has_vat:
-        print(f"  {'#':<4} {'Code':<14} {'Description':<34} {'Qty':>5} {'Price':>11} {'VAT%':>5} {'VAT':>10} {'Total':>11}")
+        print(f"  {'#':<4} {'Код':<14} {'Наименование':<34} {'Кол':>5} {'Цена':>11} {'НДС%':>5} {'НДС':>10} {'Итого':>11}")
         print(f"  {'-'*4} {'-'*14} {'-'*34} {'-'*5} {'-'*11} {'-'*5} {'-'*10} {'-'*11}")
         for item in doc.items:
             # Усечение названия товара до максимальной длины
@@ -115,7 +115,7 @@ def _print_summary(doc):
             )
         print(f"  {'-'*4} {'-'*14} {'-'*34} {'-'*5} {'-'*11} {'-'*5} {'-'*10} {'-'*11}")
     else:
-        print(f"  {'#':<4} {'Code':<14} {'Description':<40} {'Qty':>6} {'Price':>12} {'Total':>12}")
+        print(f"  {'#':<4} {'Код':<14} {'Наименование':<40} {'Кол':>6} {'Цена':>12} {'Итого':>12}")
         print(f"  {'-'*4} {'-'*14} {'-'*40} {'-'*6} {'-'*12} {'-'*12}")
         for item in doc.items:
             # Усечение названия товара до максимальной длины
@@ -127,19 +127,19 @@ def _print_summary(doc):
         print(f"  {'-'*4} {'-'*14} {'-'*40} {'-'*6} {'-'*12} {'-'*12}")
 
     # Итоговые суммы
-    print(f"  {'Subtotal (excl. VAT):':<66} {float(doc.totals.subtotal):>12,.2f}")
+    print(f"  {'Сумма без НДС:':<66} {float(doc.totals.subtotal):>12,.2f}")
     if has_vat:
-        print(f"  {'VAT:':<66} {float(doc.totals.vat):>12,.2f}")
-    print(f"  {'TOTAL:':<66} {float(doc.totals.total):>12,.2f}")
+        print(f"  {'НДС:':<66} {float(doc.totals.vat):>12,.2f}")
+    print(f"  {'ИТОГО:':<66} {float(doc.totals.total):>12,.2f}")
     print()
 
     # Информация о передаче товара
     if doc.transfer.transfer_basis:
-        print(f"  Transfer basis: {doc.transfer.transfer_basis}")
+        print(f"  Основание передачи: {doc.transfer.transfer_basis}")
     if doc.transfer.entity_shipper:
-        print(f"  Shipper entity: {doc.transfer.entity_shipper}")
+        print(f"  Грузоотправитель: {doc.transfer.entity_shipper}")
     if doc.transfer.entity_receiver:
-        print(f"  Receiver entity: {doc.transfer.entity_receiver}")
+        print(f"  Грузополучатель: {doc.transfer.entity_receiver}")
 
 
 if __name__ == "__main__":

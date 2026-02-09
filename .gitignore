@@ -1,4 +1,4 @@
-# Python
+# Кэш Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -9,30 +9,30 @@ dist/
 build/
 .eggs/
 
-# Virtual environments
+# Виртуальные окружения
 .venv/
 venv/
 ENV/
 
-# IDE
+# Среды разработки
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# OS
+# Системные файлы ОС
 .DS_Store
 Thumbs.db
 
-# Test fixtures (actual UPD PDFs — don't commit real financial docs)
+# Тестовые файлы (реальные PDF-документы УПД не включаются в репозиторий)
 tests/fixtures/*.pdf
 
-# Output
+# Результаты парсинга
 output/
 *.json
 !tests/expected/*.json
 
-# Distribution
+# Дистрибутив
 *.tar.gz
 *.whl
